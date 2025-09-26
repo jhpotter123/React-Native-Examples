@@ -74,7 +74,6 @@ For newer camera projects, see my work with [React Native Vision Camera](link-to
 
 ### Run on Android
 
-```bash
 # Install dependencies
 npm install
 
@@ -87,8 +86,28 @@ npm run android
 # Navigate to android folder
 cd android
 
-# Generate dependencies
-./gradlew :app:copyDownloadableDepsToLibs
+<!-- # Generate dependencies -->
+<!-- ./gradlew :app:copyDownloadableDepsToLibs -->
 
 # Install & run app with Buck
 buck install -r android/app
+
+### Run on iOS (Advanced Setup)
+
+iOS builds require Xcode and proper signing. Steps:
+
+# Install dependencies
+npm install
+
+# Intall pods
+cd ios
+pod install
+cd ..
+
+# Start Metro bundler
+npm run ios
+
+# Open iOS project in Xcode
+open ios/CameraExample.xcworkspace
+
+# Select a simulator or device and run

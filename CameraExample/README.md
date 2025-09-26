@@ -100,9 +100,7 @@ iOS builds require Xcode and proper signing. Steps:
 npm install
 
 # Intall pods
-cd ios
-pod install
-cd ..
+cd ios && pod install && cd ..
 
 # Start Metro bundler
 npm run ios

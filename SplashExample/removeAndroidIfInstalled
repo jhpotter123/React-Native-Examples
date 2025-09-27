@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# If there is an AndroidManifest.xml file then it is a react-native CLI based project.  So look at it, if not skip it it was an expo project.
+if [ -f "./android/app/src/main/AndroidManifest.xml" ]; then
+	# Grab the package name from the manifest file.
+	LINE=`grep "package" ./android/app/src/main/AndroidManifest.xml`
+	
+	# Grab what is between quotes and store the result.
+	# echo $LINE | awk -F '"' '{print $2}'
+	PACKAGE=`echo $LINE | cut -d'"' -f2`
+
+	# Look for the package installed on device
+	FOUND=`adb shell pm list packages $PACKAGE`
+	if [ "$FOUND" != "" ]; then
+		adb uninstall $PACKAGE
+	fi
+fi

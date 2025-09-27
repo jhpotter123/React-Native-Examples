@@ -1,0 +1,1002 @@
+jeff@MacBook-Pro ~/data/jeff_files/dev_stuff/rnapps/React-Native-Examples/CameraExample2$ ../dump-pproject-info.sh
+android/app/proguard-rules.pro
+# Add project specific ProGuard rules here.
+# By default, the flags in this file are appended to flags specified
+# in /usr/local/Cellar/android-sdk/24.3.3/tools/proguard/proguard-android.txt
+# You can edit the include path and order by changing the proguardFiles
+# directive in build.gradle.
+#
+# For more details, see
+#   http://developer.android.com/guide/developing/tools/proguard.html
+
+# Add any project specific keep options here:
+android/app/_BUCK
+# To learn about Buck see [Docs](https://buckbuild.com/).
+# To run your application with Buck:
+# - install Buck
+# - `npm start` - to start the packager
+# - `cd android`
+# - `keytool -genkey -v -keystore keystores/debug.keystore -storepass android -alias androiddebugkey -keypass android -dname "CN=Android Debug,O=Android,C=US"`
+# - `./gradlew :app:copyDownloadableDepsToLibs` - make all Gradle compile dependencies available to Buck
+# - `buck install -r android/app` - compile, install and run application
+#
+
+load(":build_defs.bzl", "create_aar_targets", "create_jar_targets")
+
+lib_deps = []
+
+create_aar_targets(glob(["libs/*.aar"]))
+
+create_jar_targets(glob(["libs/*.jar"]))
+
+android_library(
+    name = "all-libs",
+    exported_deps = lib_deps,
+)
+
+android_library(
+    name = "app-code",
+    srcs = glob([
+        "src/main/java/**/*.java",
+    ]),
+    deps = [
+        ":all-libs",
+        ":build_config",
+        ":res",
+    ],
+)
+
+android_build_config(
+    name = "build_config",
+    package = "com.cameraexample2",
+)
+
+android_resource(
+    name = "res",
+    package = "com.cameraexample2",
+    res = "src/main/res",
+)
+
+android_binary(
+    name = "app",
+    keystore = "//android/keystores:debug",
+    manifest = "src/main/AndroidManifest.xml",
+    package_type = "debug",
+    deps = [
+        ":app-code",
+    ],
+)
+android/app/build_defs.bzl
+"""Helper definitions to glob .aar and .jar targets"""
+
+def create_aar_targets(aarfiles):
+    for aarfile in aarfiles:
+        name = "aars__" + aarfile[aarfile.rindex("/") + 1:aarfile.rindex(".aar")]
+        lib_deps.append(":" + name)
+        android_prebuilt_aar(
+            name = name,
+            aar = aarfile,
+        )
+
+def create_jar_targets(jarfiles):
+    for jarfile in jarfiles:
+        name = "jars__" + jarfile[jarfile.rindex("/") + 1:jarfile.rindex(".jar")]
+        lib_deps.append(":" + name)
+        prebuilt_jar(
+            name = name,
+            binary_jar = jarfile,
+        )
+android/app/src/main/res/drawable/rn_edit_text_material.xml
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2014 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+       android:insetLeft="@dimen/abc_edit_text_inset_horizontal_material"
+       android:insetRight="@dimen/abc_edit_text_inset_horizontal_material"
+       android:insetTop="@dimen/abc_edit_text_inset_top_material"
+       android:insetBottom="@dimen/abc_edit_text_inset_bottom_material">
+
+    <selector>
+        <!--
+          This file is a copy of abc_edit_text_material (https://bit.ly/3k8fX7I).
+          The item below with state_pressed="false" and state_focused="false" causes a NullPointerException.
+          NullPointerException:tempt to invoke virtual method 'android.graphics.drawable.Drawable android.graphics.drawable.Drawable$ConstantState.newDrawable(android.content.res.Resources)'
+
+          <item android:state_pressed="false" android:state_focused="false" android:drawable="@drawable/abc_textfield_default_mtrl_alpha"/>
+
+          For more info, see https://bit.ly/3CdLStv (react-native/pull/29452) and https://bit.ly/3nxOMoR.
+        -->
+        <item android:state_enabled="false" android:drawable="@drawable/abc_textfield_default_mtrl_alpha"/>
+        <item android:drawable="@drawable/abc_textfield_activated_mtrl_alpha"/>
+    </selector>
+
+</inset>
+android/app/src/main/res/values/styles.xml
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
+    </style>
+
+</resources>
+android/app/src/main/res/values/strings.xml
+<resources>
+    <string name="app_name">CameraExample2</string>
+</resources>
+android/app/src/main/AndroidManifest.xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+	package="com.cameraexample2">
+		<uses-permission android:name="android.permission.INTERNET" />
+		<uses-permission android:name="android.permission.CAMERA" />
+		<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+		<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+		<!-- <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+		<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+		<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+		<uses-permission android:name="android.permission.RECORD_AUDIO"/> -->
+
+		<application
+			android:name=".MainApplication"
+			android:label="@string/app_name"
+			android:icon="@mipmap/ic_launcher"
+			android:roundIcon="@mipmap/ic_launcher_round"
+			android:allowBackup="false"
+			android:theme="@style/AppTheme">
+			<activity
+				android:name=".MainActivity"
+				android:label="@string/app_name"
+				android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode"
+				android:launchMode="singleTask"
+				android:windowSoftInputMode="adjustResize"
+				android:exported="true">
+				<intent-filter>
+						<action android:name="android.intent.action.MAIN" />
+						<category android:name="android.intent.category.LAUNCHER" />
+				</intent-filter>
+			</activity>
+		</application>
+</manifest>
+android/app/src/main/java/com/cameraexample2/newarchitecture/components/MainComponentsRegistry.java
+package com.cameraexample2.newarchitecture.components;
+
+import com.facebook.jni.HybridData;
+import com.facebook.proguard.annotations.DoNotStrip;
+import com.facebook.react.fabric.ComponentFactory;
+import com.facebook.soloader.SoLoader;
+
+/**
+ * Class responsible to load the custom Fabric Components. This class has native methods and needs a
+ * corresponding C++ implementation/header file to work correctly (already placed inside the jni/
+ * folder for you).
+ *
+ * <p>Please note that this class is used ONLY if you opt-in for the New Architecture (see the
+ * `newArchEnabled` property). Is ignored otherwise.
+ */
+@DoNotStrip
+public class MainComponentsRegistry {
+  static {
+    SoLoader.loadLibrary("fabricjni");
+  }
+
+  @DoNotStrip private final HybridData mHybridData;
+
+  @DoNotStrip
+  private native HybridData initHybrid(ComponentFactory componentFactory);
+
+  @DoNotStrip
+  private MainComponentsRegistry(ComponentFactory componentFactory) {
+    mHybridData = initHybrid(componentFactory);
+  }
+
+  @DoNotStrip
+  public static MainComponentsRegistry register(ComponentFactory componentFactory) {
+    return new MainComponentsRegistry(componentFactory);
+  }
+}
+android/app/src/main/java/com/cameraexample2/newarchitecture/modules/MainApplicationTurboModuleManagerDelegate.java
+package com.cameraexample2.newarchitecture.modules;
+
+import com.facebook.jni.HybridData;
+import com.facebook.react.ReactPackage;
+import com.facebook.react.ReactPackageTurboModuleManagerDelegate;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.soloader.SoLoader;
+import java.util.List;
+
+/**
+ * Class responsible to load the TurboModules. This class has native methods and needs a
+ * corresponding C++ implementation/header file to work correctly (already placed inside the jni/
+ * folder for you).
+ *
+ * <p>Please note that this class is used ONLY if you opt-in for the New Architecture (see the
+ * `newArchEnabled` property). Is ignored otherwise.
+ */
+public class MainApplicationTurboModuleManagerDelegate
+    extends ReactPackageTurboModuleManagerDelegate {
+
+  private static volatile boolean sIsSoLibraryLoaded;
+
+  protected MainApplicationTurboModuleManagerDelegate(
+      ReactApplicationContext reactApplicationContext, List<ReactPackage> packages) {
+    super(reactApplicationContext, packages);
+  }
+
+  protected native HybridData initHybrid();
+
+  native boolean canCreateTurboModule(String moduleName);
+
+  public static class Builder extends ReactPackageTurboModuleManagerDelegate.Builder {
+    protected MainApplicationTurboModuleManagerDelegate build(
+        ReactApplicationContext context, List<ReactPackage> packages) {
+      return new MainApplicationTurboModuleManagerDelegate(context, packages);
+    }
+  }
+
+  @Override
+  protected synchronized void maybeLoadOtherSoLibraries() {
+    if (!sIsSoLibraryLoaded) {
+      // If you change the name of your application .so file in the Android.mk file,
+      // make sure you update the name here as well.
+      SoLoader.loadLibrary("cameraexample2_appmodules");
+      sIsSoLibraryLoaded = true;
+    }
+  }
+}
+android/app/src/main/java/com/cameraexample2/newarchitecture/MainApplicationReactNativeHost.java
+package com.cameraexample2.newarchitecture;
+
+import android.app.Application;
+import androidx.annotation.NonNull;
+import com.facebook.react.PackageList;
+import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.ReactNativeHost;
+import com.facebook.react.ReactPackage;
+import com.facebook.react.ReactPackageTurboModuleManagerDelegate;
+import com.facebook.react.bridge.JSIModulePackage;
+import com.facebook.react.bridge.JSIModuleProvider;
+import com.facebook.react.bridge.JSIModuleSpec;
+import com.facebook.react.bridge.JSIModuleType;
+import com.facebook.react.bridge.JavaScriptContextHolder;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.UIManager;
+import com.facebook.react.fabric.ComponentFactory;
+import com.facebook.react.fabric.CoreComponentsRegistry;
+import com.facebook.react.fabric.FabricJSIModuleProvider;
+import com.facebook.react.fabric.ReactNativeConfig;
+import com.facebook.react.uimanager.ViewManagerRegistry;
+import com.cameraexample2.BuildConfig;
+import com.cameraexample2.newarchitecture.components.MainComponentsRegistry;
+import com.cameraexample2.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * A {@link ReactNativeHost} that helps you load everything needed for the New Architecture, both
+ * TurboModule delegates and the Fabric Renderer.
+ *
+ * <p>Please note that this class is used ONLY if you opt-in for the New Architecture (see the
+ * `newArchEnabled` property). Is ignored otherwise.
+ */
+public class MainApplicationReactNativeHost extends ReactNativeHost {
+  public MainApplicationReactNativeHost(Application application) {
+    super(application);
+  }
+
+  @Override
+  public boolean getUseDeveloperSupport() {
+    return BuildConfig.DEBUG;
+  }
+
+  @Override
+  protected List<ReactPackage> getPackages() {
+    List<ReactPackage> packages = new PackageList(this).getPackages();
+    // Packages that cannot be autolinked yet can be added manually here, for example:
+    //     packages.add(new MyReactNativePackage());
+    // TurboModules must also be loaded here providing a valid TurboReactPackage implementation:
+    //     packages.add(new TurboReactPackage() { ... });
+    // If you have custom Fabric Components, their ViewManagers should also be loaded here
+    // inside a ReactPackage.
+    return packages;
+  }
+
+  @Override
+  protected String getJSMainModuleName() {
+    return "index";
+  }
+
+  @NonNull
+  @Override
+  protected ReactPackageTurboModuleManagerDelegate.Builder
+      getReactPackageTurboModuleManagerDelegateBuilder() {
+    // Here we provide the ReactPackageTurboModuleManagerDelegate Builder. This is necessary
+    // for the new architecture and to use TurboModules correctly.
+    return new MainApplicationTurboModuleManagerDelegate.Builder();
+  }
+
+  @Override
+  protected JSIModulePackage getJSIModulePackage() {
+    return new JSIModulePackage() {
+      @Override
+      public List<JSIModuleSpec> getJSIModules(
+          final ReactApplicationContext reactApplicationContext,
+          final JavaScriptContextHolder jsContext) {
+        final List<JSIModuleSpec> specs = new ArrayList<>();
+
+        // Here we provide a new JSIModuleSpec that will be responsible of providing the
+        // custom Fabric Components.
+        specs.add(
+            new JSIModuleSpec() {
+              @Override
+              public JSIModuleType getJSIModuleType() {
+                return JSIModuleType.UIManager;
+              }
+
+              @Override
+              public JSIModuleProvider<UIManager> getJSIModuleProvider() {
+                final ComponentFactory componentFactory = new ComponentFactory();
+                CoreComponentsRegistry.register(componentFactory);
+
+                // Here we register a Components Registry.
+                // The one that is generated with the template contains no components
+                // and just provides you the one from React Native core.
+                MainComponentsRegistry.register(componentFactory);
+
+                final ReactInstanceManager reactInstanceManager = getReactInstanceManager();
+
+                ViewManagerRegistry viewManagerRegistry =
+                    new ViewManagerRegistry(
+                        reactInstanceManager.getOrCreateViewManagers(reactApplicationContext));
+
+                return new FabricJSIModuleProvider(
+                    reactApplicationContext,
+                    componentFactory,
+                    ReactNativeConfig.DEFAULT_CONFIG,
+                    viewManagerRegistry);
+              }
+            });
+        return specs;
+      }
+    };
+  }
+}
+android/app/src/main/java/com/cameraexample2/MainApplication.java
+package com.cameraexample2;
+
+import android.app.Application;
+import android.content.Context;
+import com.facebook.react.PackageList;
+import com.facebook.react.ReactApplication;
+import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.ReactNativeHost;
+import com.facebook.react.ReactPackage;
+import com.facebook.react.config.ReactFeatureFlags;
+import com.facebook.soloader.SoLoader;
+import com.cameraexample2.newarchitecture.MainApplicationReactNativeHost;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+
+public class MainApplication extends Application implements ReactApplication {
+
+  private final ReactNativeHost mReactNativeHost =
+      new ReactNativeHost(this) {
+        @Override
+        public boolean getUseDeveloperSupport() {
+          return BuildConfig.DEBUG;
+        }
+
+        @Override
+        protected List<ReactPackage> getPackages() {
+          @SuppressWarnings("UnnecessaryLocalVariable")
+          List<ReactPackage> packages = new PackageList(this).getPackages();
+          // Packages that cannot be autolinked yet can be added manually here, for example:
+          // packages.add(new MyReactNativePackage());
+          return packages;
+        }
+
+        @Override
+        protected String getJSMainModuleName() {
+          return "index";
+        }
+      };
+
+  private final ReactNativeHost mNewArchitectureNativeHost =
+      new MainApplicationReactNativeHost(this);
+
+  @Override
+  public ReactNativeHost getReactNativeHost() {
+    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+      return mNewArchitectureNativeHost;
+    } else {
+      return mReactNativeHost;
+    }
+  }
+
+  @Override
+  public void onCreate() {
+    super.onCreate();
+    // If you opted-in for the New Architecture, we enable the TurboModule system
+    ReactFeatureFlags.useTurboModules = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
+    SoLoader.init(this, /* native exopackage */ false);
+    initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+  }
+
+  /**
+   * Loads Flipper in React Native templates. Call this in the onCreate method with something like
+   * initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+   *
+   * @param context
+   * @param reactInstanceManager
+   */
+  private static void initializeFlipper(
+      Context context, ReactInstanceManager reactInstanceManager) {
+    if (BuildConfig.DEBUG) {
+      try {
+        /*
+         We use reflection here to pick up the class that initializes Flipper,
+        since Flipper library is not available in release mode
+        */
+        Class<?> aClass = Class.forName("com.cameraexample2.ReactNativeFlipper");
+        aClass
+            .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
+            .invoke(null, context, reactInstanceManager);
+      } catch (ClassNotFoundException e) {
+        e.printStackTrace();
+      } catch (NoSuchMethodException e) {
+        e.printStackTrace();
+      } catch (IllegalAccessException e) {
+        e.printStackTrace();
+      } catch (InvocationTargetException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+}
+android/app/src/main/java/com/cameraexample2/MainActivity.java
+package com.cameraexample2;
+
+import com.facebook.react.ReactActivity;
+import com.facebook.react.ReactActivityDelegate;
+import com.facebook.react.ReactRootView;
+
+public class MainActivity extends ReactActivity {
+
+  /**
+   * Returns the name of the main component registered from JavaScript. This is used to schedule
+   * rendering of the component.
+   */
+  @Override
+  protected String getMainComponentName() {
+    return "CameraExample2";
+  }
+
+  /**
+   * Returns the instance of the {@link ReactActivityDelegate}. There the RootView is created and
+   * you can specify the renderer you wish to use - the new renderer (Fabric) or the old renderer
+   * (Paper).
+   */
+  @Override
+  protected ReactActivityDelegate createReactActivityDelegate() {
+    return new MainActivityDelegate(this, getMainComponentName());
+  }
+
+  public static class MainActivityDelegate extends ReactActivityDelegate {
+    public MainActivityDelegate(ReactActivity activity, String mainComponentName) {
+      super(activity, mainComponentName);
+    }
+
+    @Override
+    protected ReactRootView createRootView() {
+      ReactRootView reactRootView = new ReactRootView(getContext());
+      // If you opted-in for the New Architecture, we enable the Fabric Renderer.
+      reactRootView.setIsFabric(BuildConfig.IS_NEW_ARCHITECTURE_ENABLED);
+      return reactRootView;
+    }
+
+    @Override
+    protected boolean isConcurrentRootEnabled() {
+      // If you opted-in for the New Architecture, we enable Concurrent Root (i.e. React 18).
+      // More on this on https://reactjs.org/blog/2022/03/29/react-v18.html
+      return BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
+    }
+  }
+}
+android/app/src/main/jni/MainApplicationModuleProvider.h
+#pragma once
+
+#include <memory>
+#include <string>
+
+#include <ReactCommon/JavaTurboModule.h>
+
+namespace facebook {
+namespace react {
+
+std::shared_ptr<TurboModule> MainApplicationModuleProvider(
+    const std::string &moduleName,
+    const JavaTurboModule::InitParams &params);
+
+} // namespace react
+} // namespace facebook
+android/app/src/main/jni/MainApplicationModuleProvider.cpp
+#include "MainApplicationModuleProvider.h"
+
+#include <rncli.h>
+#include <rncore.h>
+
+namespace facebook {
+namespace react {
+
+std::shared_ptr<TurboModule> MainApplicationModuleProvider(
+    const std::string &moduleName,
+    const JavaTurboModule::InitParams &params) {
+  // Here you can provide your own module provider for TurboModules coming from
+  // either your application or from external libraries. The approach to follow
+  // is similar to the following (for a library called `samplelibrary`:
+  //
+  // auto module = samplelibrary_ModuleProvider(moduleName, params);
+  // if (module != nullptr) {
+  //    return module;
+  // }
+  // return rncore_ModuleProvider(moduleName, params);
+
+  // Module providers autolinked by RN CLI
+  auto rncli_module = rncli_ModuleProvider(moduleName, params);
+  if (rncli_module != nullptr) {
+    return rncli_module;
+  }
+
+  return rncore_ModuleProvider(moduleName, params);
+}
+
+} // namespace react
+} // namespace facebook
+android/app/src/main/jni/CMakeLists.txt
+cmake_minimum_required(VERSION 3.13)
+
+# Define the library name here.
+project(cameraexample2_appmodules)
+
+# This file includes all the necessary to let you build your application with the New Architecture.
+include(${REACT_ANDROID_DIR}/cmake-utils/ReactNative-application.cmake)
+android/app/src/main/jni/MainComponentsRegistry.cpp
+#include "MainComponentsRegistry.h"
+
+#include <CoreComponentsRegistry.h>
+#include <fbjni/fbjni.h>
+#include <react/renderer/componentregistry/ComponentDescriptorProviderRegistry.h>
+#include <react/renderer/components/rncore/ComponentDescriptors.h>
+#include <rncli.h>
+
+namespace facebook {
+namespace react {
+
+MainComponentsRegistry::MainComponentsRegistry(ComponentFactory *delegate) {}
+
+std::shared_ptr<ComponentDescriptorProviderRegistry const>
+MainComponentsRegistry::sharedProviderRegistry() {
+  auto providerRegistry = CoreComponentsRegistry::sharedProviderRegistry();
+
+  // Autolinked providers registered by RN CLI
+  rncli_registerProviders(providerRegistry);
+
+  // Custom Fabric Components go here. You can register custom
+  // components coming from your App or from 3rd party libraries here.
+  //
+  // providerRegistry->add(concreteComponentDescriptorProvider<
+  //        AocViewerComponentDescriptor>());
+  return providerRegistry;
+}
+
+jni::local_ref<MainComponentsRegistry::jhybriddata>
+MainComponentsRegistry::initHybrid(
+    jni::alias_ref<jclass>,
+    ComponentFactory *delegate) {
+  auto instance = makeCxxInstance(delegate);
+
+  auto buildRegistryFunction =
+      [](EventDispatcher::Weak const &eventDispatcher,
+         ContextContainer::Shared const &contextContainer)
+      -> ComponentDescriptorRegistry::Shared {
+    auto registry = MainComponentsRegistry::sharedProviderRegistry()
+                        ->createComponentDescriptorRegistry(
+                            {eventDispatcher, contextContainer});
+
+    auto mutableRegistry =
+        std::const_pointer_cast<ComponentDescriptorRegistry>(registry);
+
+    mutableRegistry->setFallbackComponentDescriptor(
+        std::make_shared<UnimplementedNativeViewComponentDescriptor>(
+            ComponentDescriptorParameters{
+                eventDispatcher, contextContainer, nullptr}));
+
+    return registry;
+  };
+
+  delegate->buildRegistryFunction = buildRegistryFunction;
+  return instance;
+}
+
+void MainComponentsRegistry::registerNatives() {
+  registerHybrid({
+      makeNativeMethod("initHybrid", MainComponentsRegistry::initHybrid),
+  });
+}
+
+} // namespace react
+} // namespace facebook
+android/app/src/main/jni/MainComponentsRegistry.h
+#pragma once
+
+#include <ComponentFactory.h>
+#include <fbjni/fbjni.h>
+#include <react/renderer/componentregistry/ComponentDescriptorProviderRegistry.h>
+#include <react/renderer/componentregistry/ComponentDescriptorRegistry.h>
+
+namespace facebook {
+namespace react {
+
+class MainComponentsRegistry
+    : public facebook::jni::HybridClass<MainComponentsRegistry> {
+ public:
+  // Adapt it to the package you used for your Java class.
+  constexpr static auto kJavaDescriptor =
+      "Lcom/cameraexample2/newarchitecture/components/MainComponentsRegistry;";
+
+  static void registerNatives();
+
+  MainComponentsRegistry(ComponentFactory *delegate);
+
+ private:
+  static std::shared_ptr<ComponentDescriptorProviderRegistry const>
+  sharedProviderRegistry();
+
+  static jni::local_ref<jhybriddata> initHybrid(
+      jni::alias_ref<jclass>,
+      ComponentFactory *delegate);
+};
+
+} // namespace react
+} // namespace facebook
+android/app/src/main/jni/OnLoad.cpp
+#include <fbjni/fbjni.h>
+#include "MainApplicationTurboModuleManagerDelegate.h"
+#include "MainComponentsRegistry.h"
+
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *) {
+  return facebook::jni::initialize(vm, [] {
+    facebook::react::MainApplicationTurboModuleManagerDelegate::
+        registerNatives();
+    facebook::react::MainComponentsRegistry::registerNatives();
+  });
+}
+android/app/src/main/jni/MainApplicationTurboModuleManagerDelegate.h
+#include <memory>
+#include <string>
+
+#include <ReactCommon/TurboModuleManagerDelegate.h>
+#include <fbjni/fbjni.h>
+
+namespace facebook {
+namespace react {
+
+class MainApplicationTurboModuleManagerDelegate
+    : public jni::HybridClass<
+          MainApplicationTurboModuleManagerDelegate,
+          TurboModuleManagerDelegate> {
+ public:
+  // Adapt it to the package you used for your Java class.
+  static constexpr auto kJavaDescriptor =
+      "Lcom/cameraexample2/newarchitecture/modules/MainApplicationTurboModuleManagerDelegate;";
+
+  static jni::local_ref<jhybriddata> initHybrid(jni::alias_ref<jhybridobject>);
+
+  static void registerNatives();
+
+  std::shared_ptr<TurboModule> getTurboModule(
+      const std::string &name,
+      const std::shared_ptr<CallInvoker> &jsInvoker) override;
+  std::shared_ptr<TurboModule> getTurboModule(
+      const std::string &name,
+      const JavaTurboModule::InitParams &params) override;
+
+  /**
+   * Test-only method. Allows user to verify whether a TurboModule can be
+   * created by instances of this class.
+   */
+  bool canCreateTurboModule(const std::string &name);
+};
+
+} // namespace react
+} // namespace facebook
+android/app/src/main/jni/MainApplicationTurboModuleManagerDelegate.cpp
+#include "MainApplicationTurboModuleManagerDelegate.h"
+#include "MainApplicationModuleProvider.h"
+
+namespace facebook {
+namespace react {
+
+jni::local_ref<MainApplicationTurboModuleManagerDelegate::jhybriddata>
+MainApplicationTurboModuleManagerDelegate::initHybrid(
+    jni::alias_ref<jhybridobject>) {
+  return makeCxxInstance();
+}
+
+void MainApplicationTurboModuleManagerDelegate::registerNatives() {
+  registerHybrid({
+      makeNativeMethod(
+          "initHybrid", MainApplicationTurboModuleManagerDelegate::initHybrid),
+      makeNativeMethod(
+          "canCreateTurboModule",
+          MainApplicationTurboModuleManagerDelegate::canCreateTurboModule),
+  });
+}
+
+std::shared_ptr<TurboModule>
+MainApplicationTurboModuleManagerDelegate::getTurboModule(
+    const std::string &name,
+    const std::shared_ptr<CallInvoker> &jsInvoker) {
+  // Not implemented yet: provide pure-C++ NativeModules here.
+  return nullptr;
+}
+
+std::shared_ptr<TurboModule>
+MainApplicationTurboModuleManagerDelegate::getTurboModule(
+    const std::string &name,
+    const JavaTurboModule::InitParams &params) {
+  return MainApplicationModuleProvider(name, params);
+}
+
+bool MainApplicationTurboModuleManagerDelegate::canCreateTurboModule(
+    const std::string &name) {
+  return getTurboModule(name, nullptr) != nullptr ||
+      getTurboModule(name, {.moduleName = name}) != nullptr;
+}
+
+} // namespace react
+} // namespace facebook
+android/app/src/debug/AndroidManifest.xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+
+    <application
+        android:usesCleartextTraffic="true"
+        tools:targetApi="28"
+        tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="false" />
+    </application>
+</manifest>
+android/app/src/debug/java/com/cameraexample2/ReactNativeFlipper.java
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * <p>This source code is licensed under the MIT license found in the LICENSE file in the root
+ * directory of this source tree.
+ */
+package com.cameraexample2;
+
+import android.content.Context;
+import com.facebook.flipper.android.AndroidFlipperClient;
+import com.facebook.flipper.android.utils.FlipperUtils;
+import com.facebook.flipper.core.FlipperClient;
+import com.facebook.flipper.plugins.crashreporter.CrashReporterPlugin;
+import com.facebook.flipper.plugins.databases.DatabasesFlipperPlugin;
+import com.facebook.flipper.plugins.fresco.FrescoFlipperPlugin;
+import com.facebook.flipper.plugins.inspector.DescriptorMapping;
+import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin;
+import com.facebook.flipper.plugins.network.FlipperOkhttpInterceptor;
+import com.facebook.flipper.plugins.network.NetworkFlipperPlugin;
+import com.facebook.flipper.plugins.react.ReactFlipperPlugin;
+import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin;
+import com.facebook.react.ReactInstanceEventListener;
+import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.modules.network.NetworkingModule;
+import okhttp3.OkHttpClient;
+
+public class ReactNativeFlipper {
+  public static void initializeFlipper(Context context, ReactInstanceManager reactInstanceManager) {
+    if (FlipperUtils.shouldEnableFlipper(context)) {
+      final FlipperClient client = AndroidFlipperClient.getInstance(context);
+
+      client.addPlugin(new InspectorFlipperPlugin(context, DescriptorMapping.withDefaults()));
+      client.addPlugin(new ReactFlipperPlugin());
+      client.addPlugin(new DatabasesFlipperPlugin(context));
+      client.addPlugin(new SharedPreferencesFlipperPlugin(context));
+      client.addPlugin(CrashReporterPlugin.getInstance());
+
+      NetworkFlipperPlugin networkFlipperPlugin = new NetworkFlipperPlugin();
+      NetworkingModule.setCustomClientBuilder(
+          new NetworkingModule.CustomClientBuilder() {
+            @Override
+            public void apply(OkHttpClient.Builder builder) {
+              builder.addNetworkInterceptor(new FlipperOkhttpInterceptor(networkFlipperPlugin));
+            }
+          });
+      client.addPlugin(networkFlipperPlugin);
+      client.start();
+
+      // Fresco Plugin needs to ensure that ImagePipelineFactory is initialized
+      // Hence we run if after all native modules have been initialized
+      ReactContext reactContext = reactInstanceManager.getCurrentReactContext();
+      if (reactContext == null) {
+        reactInstanceManager.addReactInstanceEventListener(
+            new ReactInstanceEventListener() {
+              @Override
+              public void onReactContextInitialized(ReactContext reactContext) {
+                reactInstanceManager.removeReactInstanceEventListener(this);
+                reactContext.runOnNativeModulesQueueThread(
+                    new Runnable() {
+                      @Override
+                      public void run() {
+                        client.addPlugin(new FrescoFlipperPlugin());
+                      }
+                    });
+              }
+            });
+      } else {
+        client.addPlugin(new FrescoFlipperPlugin());
+      }
+    }
+  }
+}
+{
+  "name": "CameraExample2",
+  "displayName": "CameraExample2"
+}/**
+ * @format
+ */
+
+import {AppRegistry} from 'react-native';
+import App from './App';
+import {name as appName} from './app.json';
+
+AppRegistry.registerComponent(appName, () => App);
+{
+  "name": "CameraExample2",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "react": "18.1.0",
+    "react-native": "0.70.6",
+    "react-native-fs": "^2.20.0",
+    "react-native-vision-camera": "^2.15.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.9",
+    "@babel/runtime": "^7.12.5",
+    "@react-native-community/eslint-config": "^2.0.0",
+    "babel-jest": "^26.6.3",
+    "eslint": "^7.32.0",
+    "jest": "^26.6.3",
+    "metro-react-native-babel-preset": "0.72.3",
+    "react-test-renderer": "18.1.0"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
+jeff@MacBook-Pro ~/data/jeff_files/dev_stuff/rnapps/React-Native-Examples/CameraExample2$ npm run android
+
+> CameraExample2@0.0.1 android
+> react-native run-android
+
+warn Multiple Podfiles were found: ios/Podfile,vendor/bundle/ruby/2.7.0/gems/cocoapods-core-1.11.3/lib/cocoapods-core/Podfile. Choosing ios/Podfile automatically. If you would like to select a different one, you can configure it via "project.ios.sourceDir". You can learn more about it here: https://github.com/react-native-community/cli/blob/master/docs/configuration.md
+info Starting JS server...
+info Installing the app...
+
+> Configure project :react-native-vision-camera
+VisionCamera: node_modules/ found at: /Users/jeff/data/jeff_files/dev_stuff/rnapps/React-Native-Examples/CameraExample2/node_modules
+VisionCamera: Building with Hermes...
+VisionCamera: Frame Processors are disabled because Reanimated 3.5.0+ is not installed. C++ part will not be built.
+WARNING:DSL element 'dexOptions' is obsolete and should be removed.
+It will be removed in version 8.0 of the Android Gradle plugin.
+Using it has no effect, and the AndroidGradle plugin optimizes dexing automatically.
+
+> Task :app:installDebug
+Installing APK 'app-debug.apk' on 'moto g54 5G - 15' for :app:debug
+Installed on 1 device.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 8.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+See https://docs.gradle.org/7.5.1/userguide/command_line_interface.html#sec:command_line_warnings
+
+BUILD SUCCESSFUL in 10s
+74 actionable tasks: 2 executed, 72 up-to-date
+info Connecting to the development server...
+info Starting the app on "ZY22J5SCTW"...
+Starting: Intent { cmp=com.cameraexample2/.MainActivity }
+
+
+jeff@MacBook-Pro ~/data/jeff_files/dev_stuff/rnapps/React-Native-Examples/CameraExample2$ npm run android
+
+> CameraExample2@0.0.1 android
+> react-native run-android
+
+warn Multiple Podfiles were found: ios/Podfile,vendor/bundle/ruby/2.7.0/gems/cocoapods-core-1.11.3/lib/cocoapods-core/Podfile. Choosing ios/Podfile automatically. If you would like to select a different one, you can configure it via "project.ios.sourceDir". You can learn more about it here: https://github.com/react-native-community/cli/blob/master/docs/configuration.md
+info Starting JS server...
+info Installing the app...
+
+> Configure project :react-native-vision-camera
+VisionCamera: node_modules/ found at: /Users/jeff/data/jeff_files/dev_stuff/rnapps/React-Native-Examples/CameraExample2/node_modules
+VisionCamera: Building with Hermes...
+VisionCamera: Frame Processors are disabled because Reanimated 3.5.0+ is not installed. C++ part will not be built.
+WARNING:DSL element 'dexOptions' is obsolete and should be removed.
+It will be removed in version 8.0 of the Android Gradle plugin.
+Using it has no effect, and the AndroidGradle plugin optimizes dexing automatically.
+
+> Task :app:installDebug
+Installing APK 'app-debug.apk' on 'moto g54 5G - 15' for :app:debug
+Installed on 1 device.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 8.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+See https://docs.gradle.org/7.5.1/userguide/command_line_interface.html#sec:command_line_warnings
+
+BUILD SUCCESSFUL in 11s
+74 actionable tasks: 2 executed, 72 up-to-date
+info Connecting to the development server...
+info Starting the app on "ZY22J5SCTW"...
+Starting: Intent { cmp=com.cameraexample2/.MainActivity }
+jeff@MacBook-Pro ~/data/jeff_files/dev_stuff/rnapps/React-Native-Examples/CameraExample2$ adb logcat -c
+adb logcat -s AndroidRuntime ReactNativeJS
+
+--------- beginning of main
+09-19 20:00:36.921 12311 12364 I ReactNativeJS: Running "CameraExample2" with {"rootTag":1}
+09-19 20:00:37.284 12311 12311 D AndroidRuntime: Shutting down VM
+--------- beginning of crash
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: FATAL EXCEPTION: main
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: Process: com.cameraexample2, PID: 12311
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: java.lang.RuntimeException: Unable to resume activity {com.cameraexample2/com.cameraexample2.MainActivity}: java.lang.NullPointerException: Attempt to invoke interface method 'void com.facebook.react.bridge.Callback.invoke(java.lang.Object[])' on a null object reference
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	at android.app.ActivityThread.performResumeActivity(ActivityThread.java:5454)
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	at android.app.ActivityThread.handleResumeActivity(ActivityThread.java:5487)
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	at android.app.servertransaction.ResumeActivityItem.execute(ResumeActivityItem.java:57)
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	at android.app.servertransaction.ActivityTransactionItem.execute(ActivityTransactionItem.java:60)
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	at android.app.servertransaction.TransactionExecutor.executeLifecycleItem(TransactionExecutor.java:225)
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	at android.app.servertransaction.TransactionExecutor.executeTransactionItems(TransactionExecutor.java:107)
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:81)
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2751)
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:112)
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:268)
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:384)
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:8936)
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:580)
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:907)
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: Caused by: java.lang.NullPointerException: Attempt to invoke interface method 'void com.facebook.react.bridge.Callback.invoke(java.lang.Object[])' on a null object reference
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	at com.facebook.react.modules.permissions.PermissionsModule.onRequestPermissionsResult(PermissionsModule.java:207)
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	at com.facebook.react.ReactActivityDelegate$2.invoke(ReactActivityDelegate.java:198)
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	at com.facebook.react.ReactActivityDelegate.onResume(ReactActivityDelegate.java:123)
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	at com.facebook.react.ReactActivity.onResume(ReactActivity.java:58)
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	at android.app.Instrumentation.callActivityOnResume(Instrumentation.java:1722)
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	at android.app.Activity.performResume(Activity.java:9309)
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	at android.app.ActivityThread.performResumeActivity(ActivityThread.java:5433)
+09-19 20:00:37.286 12311 12311 E AndroidRuntime: 	... 14 more

@@ -46,14 +46,6 @@ This project includes advanced Android setup demonstrating:
 
 ---
 
-## iOS Considerations
-
-- Full support for native bridging to access Camera Roll.
-- Designed with **modular architecture** so that Fabric and TurboModules could be implemented for iOS.
-- Can demonstrate Xcode integration, build settings, and debugging process to recruiters.
-
----
-
 ## Installation
 
 ### Android
@@ -77,4 +69,29 @@ android/
 │   ├── jni/                  # Native C++ modules
 │   └── build_defs.bzl        # Buck build definitions
 ├── proguard-rules.pro
-...
+
+## iOS Considerations
+
+- Full support for native bridging to access Camera Roll.
+- Designed with **modular architecture** so that Fabric and TurboModules could be implemented for iOS.
+- Can demonstrate Xcode integration, build settings, and debugging process to recruiters.
+
+---
+
+### Run on iOS (Advanced Setup)
+
+iOS builds require Xcode and proper signing. Steps:
+
+# Install dependencies
+npm install
+
+# Intall pods
+cd ios && pod install && cd ..
+
+# Start Metro bundler
+npm run ios
+
+# Open iOS project in Xcode
+open ios/CameraExample.xcworkspace
+
+# Select a simulator or device and run

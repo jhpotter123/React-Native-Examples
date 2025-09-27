@@ -1,0 +1,8 @@
+layout-animation-experimental
+set-experimental
+jsx-fix
+alpha
+beta
+rc
+nightly
+0\.0\.0

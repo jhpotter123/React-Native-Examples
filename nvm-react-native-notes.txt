@@ -1,0 +1,6 @@
+nvm use 16.17.0
+nvm unalias default
+nvm alias default node
+
+adb logcat -c
+adb logcat -s AndroidRuntime ReactNativeJS

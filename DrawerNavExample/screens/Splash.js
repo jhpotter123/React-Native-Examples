@@ -7,7 +7,12 @@ const Splash = (props) => {
 	const data = useContext(Data);
 
 	useEffect(() => {
-		props.navigation.navigate("ProfileScreen");
+		// navigate to the named route registered in the drawer ('Profile')
+		setTimeout(() => {
+			// 'Profile' is defined inside the nested 'Main' navigator (DrawerScreens),
+			// so navigate to the parent route 'Main' and specify the child screen.
+			props.navigation.navigate('Main', { screen: 'Profile' });
+		}, 50);
 		data.SOMETHINGELSE = "STUFF GOES HERE";
 	}, []);
 

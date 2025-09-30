@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { View, Text, StyleSheet, ScrollView, ImageBackground, Image } from 'react-native';
-import { DrawerNavigatorItems } from "react-navigation-drawer";
+import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 // import { Ionicons } from "@expo/vector-icons";
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Colors from '../constants/Colors';

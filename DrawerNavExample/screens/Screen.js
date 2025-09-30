@@ -19,7 +19,7 @@ const Screen = (props) => {
 				{/* Header */}
 				<TouchableOpacity
 					style={styles.header} 
-					onPress={props.navigation.openDrawer}>
+					onPress={() => props.navigation.openDrawer()}>
 					<FontAwesome5 name="bars" size={24} color={Colors.primary} />
 				</TouchableOpacity>
 				{/* Body */}

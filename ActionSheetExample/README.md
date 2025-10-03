@@ -78,52 +78,60 @@ It demonstrates best practices for building modern React Native apps while provi
 
 ### Installation
 
-```bash
 ## Clone the repository
-git clone https://github.com/<your-username>/ActionSheetExample.git
+```
+git clone https://github.com/jhpotter123/ActionSheetExample.git
 cd ActionSheetExample
+```
 
 ## Install dependencies
+```
 npm install
-# or
+or
 yarn install
+```
 
 ## Install CocoaPods for iOS
+```
 cd ios
 pod install
 cd ..
+```
 
 ## Running the App
 
 # Android
-
+```
 npm run android
-## or
 yarn android
+```
 
 ## iOS
 
 ## Simulator
+```
 npm run ios
-## or
+or
 yarn ios
+```
 
 ## Physical Device
-
+```
 npm run ios-device
-## or
+or
 yarn ios-device
+```
 
 ## Usage
 
-## In App.js, the Action Sheet is triggered via a touchable button:
-
-
+In `App.js`, the Action Sheet is triggered via a touchable button:
 
 ```javascript
 import ActionSheet from 'react-native-action-sheet';
+
 const BUTTONS = ['Option 0', 'Option 1', 'Option 2', 'Cancel'];
 const CANCEL_INDEX = 3;
+
 const showActionSheet = () => {
   ActionSheet.showActionSheetWithOptions(
     {
@@ -140,5 +148,3 @@ const showActionSheet = () => {
     }
   );
 };
-
-

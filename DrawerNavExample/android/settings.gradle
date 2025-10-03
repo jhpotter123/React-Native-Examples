@@ -1,4 +1,6 @@
 rootProject.name = 'CoolApp'
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 include ':app'
-includeBuild('../node_modules/@react-native/gradle-plugin')
+// The project ships the Gradle plugin as the package `react-native-gradle-plugin` in node_modules
+// older/newer templates may reference `@react-native/gradle-plugin` — use the installed package name.
+includeBuild('../node_modules/react-native-gradle-plugin')

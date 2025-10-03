@@ -11,7 +11,9 @@ class MainActivity : ReactActivity() {
    * Returns the name of the main component registered from JavaScript. This is used to schedule
    * rendering of the component.
    */
-  override fun getMainComponentName(): String = "CoolApp"
+  // The JS entry registers the app name from app.json which is "DrawerNavExample",
+  // make sure the native activity requests the same component name.
+  override fun getMainComponentName(): String = "DrawerNavExample"
 
   /**
    * Returns the instance of the [ReactActivityDelegate]. We use [DefaultReactActivityDelegate]

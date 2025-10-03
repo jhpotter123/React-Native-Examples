@@ -2,20 +2,29 @@ buildscript {
     ext {
         buildToolsVersion = "34.0.0"
         minSdkVersion = 23
-        compileSdkVersion = 34
-        targetSdkVersion = 34
-        ndkVersion = "26.1.10909125"
-        kotlinVersion = "1.9.22"
+    compileSdkVersion = 33
+    targetSdkVersion = 33
+    ndkVersion = "26.1.10909125"
+    // Use versions compatible with the included react-native-gradle-plugin
+    // The plugin's build uses Kotlin 1.6.10 and AGP 7.3.1
+    kotlinVersion = "1.6.10"
+    agpVersion = "7.3.1"
+        reactNativeGradlePluginVersion = "0.71.19"
     }
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle")
-        classpath("com.facebook.react:react-native-gradle-plugin")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+        // Android Gradle Plugin
+        classpath("com.android.tools.build:gradle:${agpVersion}")
+        // React Native Gradle Plugin (the includeBuild in settings.gradle points to the local package)
+        // Provide the same version as the installed package so Gradle can match coordinates if needed.
+        classpath("com.facebook.react:react-native-gradle-plugin:${reactNativeGradlePluginVersion}")
+        // Kotlin Gradle plugin
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}")
     }
 }
 
-apply plugin: "com.facebook.react.rootproject"
+// The React Native Gradle plugin registers the 'com.facebook.react' plugin id.
+apply plugin: "com.facebook.react"

@@ -148,3 +148,15 @@ const showActionSheet = () => {
     }
   );
 };
+```
+
+### What This Demonstrates
+
+This example project highlights my ability to:
+
+- Build cross-platform React Native apps (Android & iOS) with modern architecture.
+- Integrate and customize native modules using TurboModules, Fabric, and C++ / JNI.
+- Use third-party libraries effectively, e.g., react-native-action-sheet.
+- Set up and configure development environments including Metro, CocoaPods, Gradle, and Flipper for debugging.
+- Write clean, maintainable code and structure projects for clarity and scalability.
+- Demonstrate practical React Native knowledge that can be applied to production apps.

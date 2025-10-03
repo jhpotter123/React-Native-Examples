@@ -1,0 +1,16 @@
+Copilot made a change and this file now looks like this.  May need to tweek if this is different from a clean pull.  Havce a look.
+
+$ cat node_modules/react-native/Libraries/Components/DatePicker/DatePickerIOS.js
+/**
+ * Minimal shim for DatePickerIOS to satisfy Metro imports for older/newer RN mismatches.
+ * This returns a no-op component — it's only used to avoid bundler errors in this sample app.
+ */
+import React from 'react';
+import { View } from 'react-native';
+
+const DatePickerIOS = (props) => {
+  return <View {...props} />;
+};
+
+export default DatePickerIOS;
+

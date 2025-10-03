@@ -1,0 +1,23 @@
+return (
+	<Fragment>
+		{data.map((entry, index) => {
+			console.log(entry);
+			return (
+				<View key={index}>
+					{(() => {
+						<AccordionItem 
+							key={index}
+							data={entry}
+							renderHeader={renderHeader}
+							renderContents={renderContents}
+							isExpanded={entry.show} 
+							onSelectionChange={(value) => {
+								onSelectionChange(index, value, entry);
+							}}
+						/>
+					})()}
+				</View>
+			);
+		})}
+	</Fragment>
+);

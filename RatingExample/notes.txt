@@ -1,0 +1,25 @@
+<Rating 
+	// defaultRating={3}
+	// reviews={["Terrible", "Bad", "Okay", "Good", "Great"]}
+	// count={5}
+	// reviewColor="pink"
+	// reviewSize={20}
+	showRating={false}
+	type='custom'
+	// ratingImage={GEAR_SELECTED}
+	// ratingColor='white'
+	// ratingBackgroundColor='white'
+	ratingCount={5}
+	imageSize={15}
+/>
+
+<LogoIcon visible={true} icon="icon-gear" 
+	stroke="black" strokeWidth="1" 
+	fillOpacity="0.1" 
+	fill="black"
+	style={{
+		width: imageSize, 
+		height: imageSize, 
+		// backgroundColor: 'blue'
+	}}
+/>

@@ -1,64 +1,76 @@
-import React, { useState, useEffect } from 'react';
-import { TouchableHighlight, View } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { TouchableWithoutFeedback, View, Animated, Text } from 'react-native';
 
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-
-var BACKGROUND_COLOR, BORDER_RADIUS, BORDER_WIDTH, COLOR, MARGIN, SIZE, BORDER_COLOR;
+// Dynamically require FontAwesome so Jest won't attempt to parse node_modules' ES imports
+let FontAwesome = null;
+try {
+	// prefer .default if the package exports as ES module
+	const mod = require('react-native-vector-icons/FontAwesome');
+	FontAwesome = mod && (mod.default || mod);
+} catch (e) {
+	// testing environments (Jest) may not be able to import this package; fall back to null
+	FontAwesome = null;
+}
 
 const CheckBox = (props) => {
-	const [ backgroundColor, setBackgroundColor ] = useState('#FFF');
-	const [ borderRadius, setBorderRadius ] = useState(0);
-	const [ borderWidth, setBorderWidth ] = useState(2);
-	const [ color, setColor ] = useState('#000');
-	const [ margin, setMargin ] = useState(2);
-	const [ size, setSize ] = useState(20);
-	const [ borderColor, setBorderColor ] = useState('#000');
-	const [ checked, setChecked ] = useState(props['checked'] !== undefined ? 
-		props['checked'] : false);
-	
-	const toggleCheck = () => {
-		let checkedBackup = !checked;
-		setChecked(checkedBackup);
-		props.onChange && props.onChange(props.name, checkedBackup);
-	}
+	const {
+		name,
+		onChange,
+		style = {},
+		color = '#000',
+		size = 24,
+		checked: checkedProp,
+	} = props;
 
+	const [checked, setChecked] = useState(checkedProp ?? false);
+	const scale = useRef(new Animated.Value(1)).current;
+
+	// Keep internal checked in sync if parent controls it
 	useEffect(() => {
-		if ( props['style'] !== undefined ) {
-			setBackgroundColor(props['style']['backgroundColor']);
-			setBorderRadius(props['style']['borderRadius']);
-			setBorderWidth(props['style']['borderWidth']);
-			setMargin(props['style']['margin']);
-			setBorderColor(props['style']['borderColor']);
-		}
+		if (checkedProp !== undefined) setChecked(checkedProp);
+	}, [checkedProp]);
 
-		if ( props['color'] !== undefined ) {
-			setColor(props['color']);
-		}
+	const toggle = () => {
+		const next = !checked;
+		setChecked(next);
+		onChange && onChange(name, next);
 
-		if ( props['size'] !== undefined ) {
-			setSize(props['size']);
-		}
-	});
-	
-	BACKGROUND_COLOR = backgroundColor;
-	BORDER_RADIUS = borderRadius;
-	BORDER_WIDTH = borderWidth;
-	COLOR = color;
-	MARGIN = margin;
-	SIZE = size;
-	BORDER_COLOR = borderColor;
-	return (
-		<TouchableHighlight underlayColor='transparent'
-			onPress={() => { toggleCheck() }}
-			style={{backgroundColor: BACKGROUND_COLOR, borderColor: BORDER_COLOR, 
-				borderRadius: BORDER_RADIUS, borderWidth: BORDER_WIDTH, 
-				height: SIZE, margin: MARGIN, width: SIZE }}>
-			<View style={{flex: 1, alignItems: 'center'}}>
-				{ checked &&
-				<FontAwesome name='check' size={SIZE - 5 } color={COLOR}/> }
-			</View>
-		</TouchableHighlight>
-	);
+		// small scale pop animation
+		Animated.sequence([
+			Animated.timing(scale, { toValue: 1.08, duration: 110, useNativeDriver: true }),
+			Animated.spring(scale, { toValue: 1, friction: 6, useNativeDriver: true }),
+		]).start();
+	};
+
+	const boxStyle = {
+		width: size,
+		height: size,
+		borderRadius: style.borderRadius ?? 6,
+		borderWidth: style.borderWidth ?? 2,
+		backgroundColor: style.backgroundColor ?? '#fff',
+		borderColor: style.borderColor ?? '#ddd',
+		margin: style.margin ?? 6,
+		alignItems: 'center',
+		justifyContent: 'center',
+	};
+
+		return (
+			<TouchableWithoutFeedback
+				onPress={toggle}
+				accessibilityRole="checkbox"
+				accessibilityState={{ checked }}
+			>
+				<Animated.View style={[boxStyle, { transform: [{ scale }] }]}> 
+					{checked && (
+						FontAwesome ? (
+							<FontAwesome name="check" size={Math.max(10, size - 6)} color={color} />
+						) : (
+							<Text style={{ color, fontSize: Math.max(10, size - 6), fontWeight: '700' }}>✓</Text>
+						)
+					)}
+				</Animated.View>
+			</TouchableWithoutFeedback>
+		);
 };
 
 export default CheckBox;

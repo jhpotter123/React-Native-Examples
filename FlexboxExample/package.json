@@ -1,14 +1,39 @@
 {
-  "name": "FlexboxExample",
-  "version": "0.0.1",
+  "name": "react-native-flexbox-example",
+  "version": "1.0.0",
+  "description": "A comprehensive React Native application demonstrating advanced Flexbox layout techniques and modern UI design patterns",
+  "main": "index.js",
+  "author": "Jeff Potter <your.email@example.com>",
+  "keywords": [
+    "react-native",
+    "flexbox",
+    "layout",
+    "mobile-development",
+    "ui-ux",
+    "responsive-design",
+    "cross-platform"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jhpotter123/React-Native-Examples.git"
+  },
   "private": true,
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios --simulator 'iPhone 14'",
-    "postinstall": "node ./scripts/patch-boost-podspec.js || true && node ./scripts/patch-yoga.js || true",
+    "ios:device": "react-native run-ios --device",
     "start": "react-native start",
+    "start:reset": "react-native start --reset-cache",
     "test": "jest",
-    "lint": "eslint ."
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "clean": "cd android && ./gradlew clean && cd .. && cd ios && xcodebuild clean && cd ..",
+    "clean:deps": "rm -rf node_modules && npm install",
+    "postinstall": "node ./scripts/patch-boost-podspec.js || true && node ./scripts/patch-yoga.js || true",
+    "pods": "cd ios && pod install && cd ..",
+    "dev:tools": "npx react-devtools"
   },
   "dependencies": {
     "react": "17.0.2",

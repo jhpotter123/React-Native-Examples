@@ -1,15 +1,34 @@
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-platform :ios, '10.0'
+platform :ios, '11.0'
+install! 'cocoapods', :deterministic_uuids => false
 
 target 'UseReducerExample' do
   config = use_native_modules!
 
+  # Flags change depending on the env values.
+  flags = get_default_flags()
+
+  # If you're working from a fresh checkout without node_modules, use the
+  # local copy of third-party podspecs so CocoaPods can fetch boost reliably
+  # without modifying node_modules. This avoids checksum/extraction issues
+  # caused by some upstream mirrors.
+  local_boost_pod = File.join(__dir__, 'third-party-podspecs', 'boost.podspec')
+  rn_boost_pod = File.join(__dir__, '..', 'node_modules', 'react-native', 'third-party-podspecs', 'boost.podspec')
+  unless File.exist?(rn_boost_pod)
+    pod 'boost', :path => local_boost_pod
+  else
+    puts "Using react-native bundled boost podspec: #{rn_boost_pod}"
+  end
+
   use_react_native!(
     :path => config[:reactNativePath],
     # to enable hermes on iOS, change `false` to `true` and then install pods
-    :hermes_enabled => false
+    :hermes_enabled => flags[:hermes_enabled],
+    :fabric_enabled => flags[:fabric_enabled],
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
   target 'UseReducerExampleTests' do
@@ -25,5 +44,35 @@ target 'UseReducerExample' do
 
   post_install do |installer|
     react_native_post_install(installer)
+
+    # Ensure all Pods are built with a minimum iOS deployment target of 12.x
+    # so APIs used by libc++ (like std::optional::value) are available.
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        begin
+          current = config.build_settings['IPHONEOS_DEPLOYMENT_TARGET']
+          # If not set or lower than 12.0, bump it to 12.4
+          if current.nil? || current.to_f < 12.0
+            config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.4'
+          end
+        rescue => e
+          # ignore targets we can't modify
+        end
+
+        # Define this macro so Boost's headers use the typedef-only
+        # hash_base instead of inheriting from std::unary_function which
+        # is removed in libc++ when compiling with C++17.
+        defs = config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
+        unless defs.any? { |d| d.to_s.include?('BOOST_NO_CXX98_FUNCTION_BASE') }
+          defs << 'BOOST_NO_CXX98_FUNCTION_BASE=1'
+        end
+      end
+    end
+
+    # Apply local patch for Folly Time.h to avoid clockid_t/CLOCK_* collisions
+    # This script is idempotent and safe to run multiple times. Use Node for portability.
+    system("$(which node) #{File.join(__dir__, '..', 'scripts', 'patch-folly-time.js')}")
+
+    __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
 end

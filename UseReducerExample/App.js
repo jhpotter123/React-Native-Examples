@@ -1,9 +1,11 @@
-import React, { useState, useReducer } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import React, { useReducer, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, StatusBar, Animated } from 'react-native';
+import SplashScreen from 'react-native-splash-screen';
 
 const ACTIONS = {
 	INCREMENT: "increment",
 	DECREMENT: "decrement",
+	RESET: "reset",
 };
 
 const reducer = (state, action) => {
@@ -12,28 +14,108 @@ const reducer = (state, action) => {
 			return { count: state.count + 1 };
 		case ACTIONS.DECREMENT:
 			return { count: state.count - 1 };
+		case ACTIONS.RESET:
+			return { count: 0 };
 		default:
 			return state;
 	}
 };
 
 const App = () => {
-	const [state, dispatch] = useReducer(reducer, {count: 0});
+	const [state, dispatch] = useReducer(reducer, { count: 0 });
+	const scaleValue = new Animated.Value(1);
+
+	useEffect(() => {
+		SplashScreen.hide();
+	}, []);
+
+	useEffect(() => {
+		// Animate the counter when it changes
+		Animated.sequence([
+			Animated.timing(scaleValue, {
+				toValue: 1.2,
+				duration: 150,
+				useNativeDriver: true,
+			}),
+			Animated.timing(scaleValue, {
+				toValue: 1,
+				duration: 150,
+				useNativeDriver: true,
+			}),
+		]).start();
+	}, [state.count]);
+
+	const handleIncrement = () => {
+		dispatch({ type: ACTIONS.INCREMENT });
+	};
+
+	const handleDecrement = () => {
+		dispatch({ type: ACTIONS.DECREMENT });
+	};
+
+	const handleReset = () => {
+		dispatch({ type: ACTIONS.RESET });
+	};
+
+	const getCounterColor = () => {
+		if (state.count > 0) return '#4CAF50';
+		if (state.count < 0) return '#F44336';
+		return '#2196F3';
+	};
 
 	return (
 		<View style={styles.container}>
-			<View style={styles.itemContainer}>
-				<TouchableOpacity style={styles.button} onPress={() => dispatch({type:ACTIONS.INCREMENT})}>
+			<StatusBar barStyle="light-content" backgroundColor="#1a1a2e" />
+			
+			<View style={styles.header}>
+				<Text style={styles.title}>useReducer Counter</Text>
+				<Text style={styles.subtitle}>React Native Hook Demonstration</Text>
+			</View>
+
+			<View style={styles.counterContainer}>
+				<Animated.View 
+					style={[
+						styles.counterCircle, 
+						{ 
+							transform: [{ scale: scaleValue }],
+							backgroundColor: getCounterColor()
+						}
+					]}
+				>
+					<Text style={styles.counterText}>{state.count}</Text>
+				</Animated.View>
+			</View>
+
+			<View style={styles.buttonContainer}>
+				<TouchableOpacity 
+					style={[styles.button, styles.decrementButton]} 
+					onPress={handleDecrement}
+					activeOpacity={0.8}
+				>
+					<Text style={styles.buttonText}>−</Text>
+				</TouchableOpacity>
+
+				<TouchableOpacity 
+					style={[styles.button, styles.resetButton]} 
+					onPress={handleReset}
+					activeOpacity={0.8}
+				>
+					<Text style={styles.resetButtonText}>RESET</Text>
+				</TouchableOpacity>
+
+				<TouchableOpacity 
+					style={[styles.button, styles.incrementButton]} 
+					onPress={handleIncrement}
+					activeOpacity={0.8}
+				>
 					<Text style={styles.buttonText}>+</Text>
 				</TouchableOpacity>
 			</View>
-			<View style={styles.itemContainer}>
-				<Text style={styles.textLabel}>{state.count}</Text>
-			</View>
-			<View style={styles.itemContainer}>
-				<TouchableOpacity style={styles.button} onPress={() => dispatch({type:ACTIONS.DECREMENT})}>
-					<Text style={styles.buttonText}>-</Text>
-				</TouchableOpacity>
+
+			<View style={styles.footer}>
+				<Text style={styles.footerText}>
+					Current Value: <Text style={{ color: getCounterColor(), fontWeight: 'bold' }}>{state.count}</Text>
+				</Text>
 			</View>
 		</View>
 	);
@@ -42,41 +124,103 @@ const App = () => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		flexDirection: 'row',
+		backgroundColor: '#0f0f23',
+		paddingHorizontal: 20,
+		paddingTop: 60,
 	},
-	itemContainer: {
-		maxHeight: 100,
-		width: 100,
-		justifyContent: "center",
-		alignItems: "center",
-		// backgroundColor:'red',
+	header: {
+		alignItems: 'center',
+		marginBottom: 50,
 	},
-	itemSize: {
-		width: 100,
-		height: 100,
+	title: {
+		fontSize: 32,
+		fontWeight: 'bold',
+		color: '#ffffff',
+		marginBottom: 8,
+		textAlign: 'center',
 	},
-	textContainer: {
+	subtitle: {
+		fontSize: 16,
+		color: '#a0a0a0',
+		textAlign: 'center',
+	},
+	counterContainer: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	counterCircle: {
 		width: 200,
-		// backgroundColor: 'powderblue'
+		height: 200,
+		borderRadius: 100,
+		justifyContent: 'center',
+		alignItems: 'center',
+		shadowColor: '#000',
+		shadowOffset: {
+			width: 0,
+			height: 8,
+		},
+		shadowOpacity: 0.44,
+		shadowRadius: 10.32,
+		elevation: 16,
 	},
-	textLabel: {
-		fontSize: 30
+	counterText: {
+		fontSize: 64,
+		fontWeight: 'bold',
+		color: '#ffffff',
 	},
 	buttonContainer: {
-		width: 50,
-		height: 50,
-		// backgroundColor: 'skyblue'
+		flexDirection: 'row',
+		justifyContent: 'space-around',
+		alignItems: 'center',
+		marginBottom: 50,
+		paddingHorizontal: 20,
 	},
 	button: {
-		width: 100,
-		height: 40,
-		backgroundColor: 'black',
-		borderRadius: 10,
-		alignItems: 'center',
+		width: 70,
+		height: 70,
+		borderRadius: 35,
 		justifyContent: 'center',
+		alignItems: 'center',
+		shadowColor: '#000',
+		shadowOffset: {
+			width: 0,
+			height: 4,
+		},
+		shadowOpacity: 0.3,
+		shadowRadius: 4.65,
+		elevation: 8,
+	},
+	incrementButton: {
+		backgroundColor: '#4CAF50',
+	},
+	decrementButton: {
+		backgroundColor: '#F44336',
+	},
+	resetButton: {
+		backgroundColor: '#FF9800',
+		width: 100,
+		borderRadius: 25,
 	},
 	buttonText: {
-		color: 'white',
+		fontSize: 32,
+		fontWeight: 'bold',
+		color: '#ffffff',
+	},
+	resetButtonText: {
+		fontSize: 14,
+		fontWeight: 'bold',
+		color: '#ffffff',
+		letterSpacing: 1,
+	},
+	footer: {
+		alignItems: 'center',
+		marginBottom: 40,
+	},
+	footerText: {
+		fontSize: 18,
+		color: '#a0a0a0',
+		textAlign: 'center',
 	},
 });
 

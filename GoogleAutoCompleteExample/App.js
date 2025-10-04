@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import Entypo from 'react-native-vector-icons/Entypo';
+import { StyleSheet, View, Text } from 'react-native';
+// import AntDesign from 'react-native-vector-icons/AntDesign';
+// import Entypo from 'react-native-vector-icons/Entypo';
 import PlaceSearch from './PlaceSearch';
 import { GeoCoder } from './Geocoder';
 
@@ -21,8 +21,8 @@ const App = (props) => {
 			<PlaceSearch 
 				apikey={API_KEY} // required *
 				selectedAddress={selectedAddress} // required *
-				searchIcon={<AntDesign name="search1" style={[styles.searchIconStyle, props.searchIconStyle]}/>} //optional
-				listEntryIcon={<Entypo name="location-pin" style={[styles.listIconStyle,props.listIconStyle]} />} //optional
+				searchIcon={<Text style={[styles.searchIconStyle, props.searchIconStyle]}>🔍</Text>} //optional
+				listEntryIcon={<Text style={[styles.listIconStyle,props.listIconStyle]}>📍</Text>} //optional
 				country ={COUNTRY_CODE} //optional
 				searchIconStyle={styles.searchIconStyle} //optional
 				mainInputContainer={styles.mainInputContainer} //optional
@@ -53,14 +53,14 @@ const styles = StyleSheet.create({
 	inputContainer: {
 	},
 	textInput: {
+		color: '#333333'
 	},
 	resultsScrollView: {
 	},
 	listStyle: {
 	},
-	listStyle: {
-	},
 	listTextStyle: {
+		color: '#333333'
 	},
 	listIconStyle : {
 		// color:'#474444'

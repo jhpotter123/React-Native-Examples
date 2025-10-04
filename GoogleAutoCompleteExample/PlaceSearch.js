@@ -50,7 +50,7 @@ const PlaceSearch = (props) => {
 			</View>
 			<FlatList
 				data={allAddress}
-				renderItem={({ item }) => 
+				renderItem={({ item, index }) => 
 					<TouchableOpacity 
 						style={[styles.listStyle,props.listStyle]}
 						onPress={() => addressSelected(item)}>
@@ -58,7 +58,7 @@ const PlaceSearch = (props) => {
 						<Text style={[styles.listTextStyle,props.listTextStyle]}>{item.description}</Text>
 					</TouchableOpacity>
 				}
-				keyExtractor={item => item.id}
+				keyExtractor={(item, index) => item.place_id || index.toString()}
 			/>
 		</Fragment>
 	);
@@ -86,6 +86,7 @@ const styles = StyleSheet.create({
 		backgroundColor:'#fff',
 		marginLeft:10,
 		marginRight:10,
+		color: '#333333'
 	},
 	resultsScrollView: {
 		zIndex:999,
@@ -106,7 +107,8 @@ const styles = StyleSheet.create({
 	},
 	listTextStyle : {
 		fontSize:13,
-		marginHorizontal:7
+		marginHorizontal:7,
+		color: '#333333'
 	},
 });
 

@@ -62,6 +62,7 @@ const SwipeRating = (props) => {
 			dx	: pan.current.x,
 			dy	: pan.current.y
 		}], {
+			useNativeDriver: false,
 			listener: () => {}
 		}),
 		onPanResponderRelease: (event, gesture) => {
@@ -98,9 +99,6 @@ const SwipeRating = (props) => {
 				inputRange: [-ratingCount * (imageSize / 2), 0, ratingCount * (imageSize / 2)],
 				outputRange: [0, (ratingCount * imageSize) / 2, ratingCount * imageSize],
 				extrapolate: 'clamp'
-			},
-			{
-				useNativeDriver: true
 			}
 		);
 
@@ -121,9 +119,6 @@ const SwipeRating = (props) => {
 				inputRange: [-ratingCount * (imageSize / 2), 0, ratingCount * (imageSize / 2)],
 				outputRange: [ratingCount * imageSize, (ratingCount * imageSize) / 2, 0],
 				extrapolate: 'clamp'
-			},
-			{
-				useNativeDriver: true
 			}
 		);
 

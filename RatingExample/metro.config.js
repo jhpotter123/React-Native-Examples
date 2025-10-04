@@ -5,6 +5,8 @@
  * @format
  */
 
+const path = require('path');
+
 module.exports = {
   transformer: {
     getTransformOptions: async () => ({
@@ -13,5 +15,13 @@ module.exports = {
         inlineRequires: true,
       },
     }),
+  },
+  resolver: {
+    alias: {
+      './Libraries/Components/DatePicker/DatePickerIOS': path.resolve(
+        __dirname,
+        'scripts/shims/DatePickerIOS.js'
+      ),
+    },
   },
 };

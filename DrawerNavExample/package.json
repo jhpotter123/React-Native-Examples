@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "ios": "react-native run-ios --simulator=\"iPhone 11\"",
+    "ios": "react-native run-ios --simulator=\"iPhone 14\"",
     "ios-device": "react-native run-ios --device \"Jan’s iPhone\"",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "postinstall": "node ./scripts/patch-boost-podspec.js || true && node ./scripts/patch-yoga.js || true"
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.10",
@@ -17,7 +18,7 @@
     "@react-navigation/native-stack": "^6.9.12",
     "react": "18.2.0",
     "react-native": "0.71.8",
-    "react-native-gesture-handler": "2.5.0",
+    "react-native-gesture-handler": "^2.28.0",
     "react-native-reanimated": "^2.17.0",
     "react-native-safe-area-context": "^4.5.0",
     "react-native-screens": "3.22.0",

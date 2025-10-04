@@ -1,52 +1,62 @@
+# React Native 0.71 Podfile (adjusted)
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-platform :ios, min_ios_version_supported
+platform :ios, '12.4'
 prepare_react_native_project!
 
-# flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
+# Disable Flipper unless you explicitly need it (keeps install simpler)
 flipper_config = FlipperConfiguration.disabled
-
-linkage = ENV['USE_FRAMEWORKS']
-if linkage != nil
-  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
-  use_frameworks! :linkage => linkage.to_sym
-end
 
 target 'DrawerNavExample' do
   config = use_native_modules!
+  flags  = get_default_flags()
 
-  # Flags change depending on the env values.
-  flags = get_default_flags()
+  # Optional local fallback for boost if node_modules spec is missing
+  local_boost_podspec = File.join(__dir__, 'third-party-podspecs', 'boost.podspec')
+  rn_boost_podspec    = File.join(__dir__, '..', 'node_modules', 'react-native', 'third-party-podspecs', 'boost.podspec')
+  unless File.exist?(rn_boost_podspec)
+    pod 'boost', :path => local_boost_podspec
+    puts "[Podfile] Using local third-party-podspecs/boost.podspec"
+  end
 
   use_react_native!(
-    :path => config[:reactNativePath],
-    # Hermes is now enabled by default. Disable by setting this flag to false.
-    # Upcoming versions of React Native may rely on get_default_flags(), but
-    # we make it explicit here to aid in the React Native upgrade process.
-    :hermes_enabled => flags[:hermes_enabled],
-    :fabric_enabled => flags[:fabric_enabled],
-    # Enables Flipper.
-    #
-    # Note that if you have use_frameworks! enabled, Flipper will not work and
-    # you should disable the next line.
+    :path                  => config[:reactNativePath],
+    :new_arch_enabled      => false,
+    :hermes_enabled        => flags[:hermes_enabled],
     :flipper_configuration => flipper_config,
-    # An absolute path to your application root.
-    :app_path => "#{Pod::Config.instance.installation_root}/.."
+    :app_path              => "#{Pod::Config.instance.installation_root}/.."
   )
+
+  # (Removed) Manual 'React-RCTFabric' line – not needed with new arch disabled.
 
   target 'DrawerNavExampleTests' do
     inherit! :complete
-    # Pods for testing
   end
 
   post_install do |installer|
     react_native_post_install(
       installer,
-      # Set `mac_catalyst_enabled` to `true` in order to apply patches
-      # necessary for Mac Catalyst builds
       :mac_catalyst_enabled => false
     )
+
+    # Uniformly bump every pod's IPHONEOS_DEPLOYMENT_TARGET and add Boost macro.
+    installer.pods_project.targets.each do |t|
+      t.build_configurations.each do |cfg|
+        if cfg.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 12.4
+          cfg.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.4'
+        end
+        defs = cfg.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)']
+        unless defs.any? { |d| d.to_s.include?('BOOST_NO_CXX98_FUNCTION_BASE') }
+          defs << 'BOOST_NO_CXX98_FUNCTION_BASE=1'
+        end
+      end
+    end
+
+    # Run Folly Time.h patch (idempotent)
+    system("node #{File.join(__dir__, '..', 'scripts', 'patch-folly-time.js')}") or
+      puts "[PostInstall] Warning: Folly Time.h patch script failed (continuing)"
+
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
 end

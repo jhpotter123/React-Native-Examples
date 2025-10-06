@@ -160,3 +160,28 @@ This example project highlights my ability to:
 - Set up and configure development environments including Metro, CocoaPods, Gradle, and Flipper for debugging.
 - Write clean, maintainable code and structure projects for clarity and scalability.
 - Demonstrate practical React Native knowledge that can be applied to production apps.
+
+
+---
+
+## 👨‍💻 About the Developer
+
+**Jeff Potter**
+- Demonstrates proficiency in React Native development
+- Showcases understanding of modern mobile UI patterns
+- Exhibits clean code practices and component architecture
+---
+
+This project showcases my expertise in **React Native development**, **mobile UX design**, and **cross-platform application architecture**. I focus on creating **performant**, **scalable**, and **user-friendly** mobile applications that deliver exceptional user experiences.
+
+### 📫 Connect With Me
+- 📧 Email: [jhpotter123@gmail.com]((mailto:jhpotter123@gmail.com))
+- 💼 LinkedIn: [Your LinkedIn Profile](https://www.linkedin.com/in/jeffrey-potter-14196028/)
+- 🐙 GitHub: [Your GitHub Profile](https://github.com/jhpotter123)
+
+---
+
+<p align="center">
+  <i>Built with ❤️ using React Native</i><br>
+  <i>Demonstrating professional mobile development skills</i>
+</p>

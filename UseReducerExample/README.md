@@ -172,12 +172,31 @@ This project is part of a portfolio showcasing React Native development skills. 
 
 This project is open source and available under the [MIT License](LICENSE).
 
-## 👨‍💻 Developer
+## 👨‍💻 About the Developer
 
 Created by **Jeff Potter** as part of a React Native development portfolio.
 
-- Portfolio: [GitHub Profile](https://github.com/jhpotter123)
-- LinkedIn: [Connect with me](https://linkedin.com/in/your-profile)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue.svg)](https://www.linkedin.com/in/jeffrey-potter-14196028/)
+[![Email](https://img.shields.io/badge/Email-Contact-red.svg)](mailto:jhpotter123@gmail.com)
+
+- Demonstrates proficiency in React Native development
+- Showcases understanding of modern mobile UI patterns
+- Exhibits clean code practices and component architecture
+---
+
+This project showcases my expertise in **React Native development**, **mobile UX design**, and **cross-platform application architecture**. I focus on creating **performant**, **scalable**, and **user-friendly** mobile applications that deliver exceptional user experiences.
+
+### 📫 Connect With Me
+- 📧 Email: [jhpotter123@gmail.com]((mailto:jhpotter123@gmail.com))
+- 💼 LinkedIn: [Your LinkedIn Profile](https://www.linkedin.com/in/jeffrey-potter-14196028/)
+- 🐙 GitHub: [Your GitHub Profile](https://github.com/jhpotter123)
+
+---
+
+<p align="center">
+  <i>Built with ❤️ using React Native</i><br>
+  <i>Demonstrating professional mobile development skills</i>
+</p>
 
 ---
 

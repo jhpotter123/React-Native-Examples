@@ -191,13 +191,6 @@ const locationOptions = {
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 👨‍💻 Developer
-
-**Jeff [Your Last Name]**
-- 📧 Email: your.email@example.com
-- 💼 LinkedIn: [Your LinkedIn Profile]
-- 🐙 GitHub: [Your GitHub Profile]
-
 ## 🎯 Skills Demonstrated
 
 - ✅ React Native cross-platform development
@@ -212,3 +205,25 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 *This project demonstrates proficiency in React Native development, native mobile APIs, and location-based services - key skills for mobile application development roles.*
+
+## 👨‍💻 About the Developer
+
+**Jeff Potter**
+- Demonstrates proficiency in React Native development
+- Showcases understanding of modern mobile UI patterns
+- Exhibits clean code practices and component architecture
+---
+
+This project showcases my expertise in **React Native development**, **mobile UX design**, and **cross-platform application architecture**. I focus on creating **performant**, **scalable**, and **user-friendly** mobile applications that deliver exceptional user experiences.
+
+### 📫 Connect With Me
+- 📧 Email: [jhpotter123@gmail.com]((mailto:jhpotter123@gmail.com))
+- 💼 LinkedIn: [Your LinkedIn Profile](https://www.linkedin.com/in/jeffrey-potter-14196028/)
+- 🐙 GitHub: [Your GitHub Profile](https://github.com/jhpotter123)
+
+---
+
+<p align="center">
+  <i>Built with ❤️ using React Native</i><br>
+  <i>Demonstrating professional mobile development skills</i>
+</p>

@@ -172,14 +172,24 @@ This project demonstrates:
 
 ---
 
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue.svg)](https://www.linkedin.com/in/jeffrey-potter-14196028/)
+[![Email](https://img.shields.io/badge/Email-Contact-red.svg)](mailto:jhpotter123@gmail.com)
+
+---
+
 ## 👨‍💻 About the Developer
+
+**Jeff Potter**
+- Demonstrates proficiency in React Native development
+- Showcases understanding of modern mobile UI patterns
+- Exhibits clean code practices and component architecture
 
 This project showcases my expertise in **React Native development**, **mobile UX design**, and **cross-platform application architecture**. I focus on creating **performant**, **scalable**, and **user-friendly** mobile applications that deliver exceptional user experiences.
 
 ### 📫 Connect With Me
-- **LinkedIn**: [Your LinkedIn Profile]
-- **Portfolio**: [Your Portfolio URL]
-- **Email**: [Your Email]
+- 📧 Email: [jhpotter123@gmail.com](mailto:jhpotter123@gmail.com)
+- 💼 LinkedIn: [Jeffrey Potter](https://www.linkedin.com/in/jeffrey-potter-14196028/)
+- 🐙 GitHub: [jhpotter123](https://github.com/jhpotter123)
 
 ---
 
